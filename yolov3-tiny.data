@@ -1,0 +1,8 @@
+# yolov3-lite config file
+names   = /Volumes/HD/Applications/darknet/Pascal/voc.names
+#cfg     = /Volumes/HD/Applications/darknet/Pascal/cfg/yolov3-tiny.cfg
+#weights = /Volumes/HD/Applications/darknet/Pascal/backup/yolov3-tiny_best.weights
+cfg     = /Volumes/HD/Applications/darknet/Pascal/cfg/yolov3-tiny-better.cfg
+weights = /Volumes/HD/Applications/darknet/Pascal/backup/yolov3-tiny-better_best.weights
+width   = 416
+height  = 416
