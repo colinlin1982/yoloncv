@@ -9,21 +9,21 @@ Requirements
 
 Usage
 =====
-test on a image:
-detect --image=/your/path/to/image.jpg --cfg=/your/path/to/config.data --thresh=0.5 --nms=0.6
-detect --image=/your/path/to/image.jpg --cfg=/your/path/to/config.data
-detect -i=/your/path/to/image.jpg -c=/your/path/to/config.data -t=0.5 -n=0.6
+test on a image:  
+detect --image=/your/path/to/image.jpg --cfg=/your/path/to/config.data --thresh=0.5 --nms=0.6  
+detect --image=/your/path/to/image.jpg --cfg=/your/path/to/config.data  
+detect -i=/your/path/to/image.jpg -c=/your/path/to/config.data -t=0.5 -n=0.6  
 
-test on jpg images in a dir:
-detect --dir=/your/path/to/dir --cfg=/your/path/to/config.data --thresh=0.5 --nms=0.6
+test on jpg images in a dir:  
+detect --dir=/your/path/to/dir --cfg=/your/path/to/config.data --thresh=0.5 --nms=0.6  
 
 About config.data
 =================
-names  : path to your classes name list, such as coco.names, voc.names
-cfg    : path to your darknet network cfg file, such as yolov3.cfg, yolov3-tiny.cfg
-weights: path to your darknet network weights file, download from web or trained with your own dataset
-width  : network input width
-height : network input height
+names  : path to your classes name list, such as coco.names, voc.names  
+cfg    : path to your darknet network cfg file, such as yolov3.cfg, yolov3-tiny.cfg  
+weights: path to your darknet network weights file, download from web or trained with your own dataset  
+width  : network input width  
+height : network input height  
 
 Contact me
 ==========
