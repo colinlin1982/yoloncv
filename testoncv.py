@@ -151,6 +151,7 @@ detector = YoloDetector()
 detector.load_classes(classes_file)
 detector.init_net(cfg_file, weights_file, input_shape)
 file_list = glob.glob(img_dir + "/*/*.jpg")
+file_list.extend(glob.glob(img_dir + "/*.jpg"))
 
 
 class Viewer:
