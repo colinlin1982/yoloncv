@@ -1,6 +1,7 @@
 # yoloncv
 (YOLO ON OPENCV)
 Test yolo object detector model with opencv4.2 dnn
+![Image text](https://raw.githubusercontent.com/colinlin1982/yoloncv/master/screenshot/WX20200229-214217.png)
 
 Requirements
 ============
