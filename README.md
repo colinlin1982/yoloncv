@@ -4,8 +4,11 @@ Test yolo object detector model with opencv4.2 dnn
 
 Requirements
 ============
+c++
 1. opencv >= 4.2 (with dnn module)
 2. cmake >= 3.13
+python
+1. opencv>=4.2
 
 Usage
 =====
@@ -16,6 +19,7 @@ detect -i=/your/path/to/image.jpg -c=/your/path/to/config.data -t=0.5 -n=0.6
 
 test on jpg images in a dir:  
 detect --dir=/your/path/to/dir --cfg=/your/path/to/config.data --thresh=0.5 --nms=0.6  
+python testoncv.py -d /your/path/to/dir -c /your/path/to/config.data -t 0.5 -n 0.6
 
 About config.data
 =================
