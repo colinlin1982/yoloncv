@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import os
+import argparse
 import numpy as np
 import cv2
 import glob
@@ -8,13 +9,57 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 
-classes_file = "/Volumes/HD/Applications/darknet/Pascal/voc.names"
-cfg_file = "net.cfg"
-weights_file = "/Volumes/HD/Applications/darknet/Pascal/backup/yolov3-lite-416_55.35.weights"
-img_dir = "/Volumes/HD/Applications/darknet/Pascal/VOCdevkit/VOC2007"
-input_shape = (416, 416)
-conf_threshold = 0.5
-nms_threshold = 0.6
+parser = argparse.ArgumentParser()
+parser.add_argument("-c", type=str, default="yolov3-tiny.data", help="config file")
+parser.add_argument("-d", type=str,
+                    default="/Volumes/HD/Applications/darknet/Pascal/VOCdevkit/VOC2007/JPEGImages",
+                    help="image directory")
+parser.add_argument("-t", type=float, default=0.5, help="confidence threshold")
+parser.add_argument("-n", type=float, default=0.6, help="nms threshold")
+
+
+def parse_options(opt_file):
+    options = {}
+    with open(opt_file, "r") as cfr:
+        while True:
+            line = cfr.readline()
+            if not line:
+                break
+
+            comment_idx = line.find('#')
+            if comment_idx == 0:
+                continue
+            elif comment_idx < 0:
+                pass
+            else:
+                line = line[:comment_idx]
+
+            eq_idx = line.find("=")
+            if eq_idx < 0:
+                continue
+
+            key = line[:eq_idx].strip()
+            val = line[eq_idx + 1:].strip()
+            # print(key, "=", val)
+            options[key] = val
+
+    return options
+
+
+args = parser.parse_args()
+# load dictionary
+if not os.path.exists(args.c):
+    print("config file {} not exists.".format(args.c))
+    exit(0)
+option_dict = parse_options(args.c)
+
+classes_file = option_dict["names"]
+cfg_file = option_dict["cfg"]
+weights_file = option_dict["weights"]
+net_shape = (int(option_dict["width"]), int(option_dict["height"]))
+img_dir = args.d
+conf_threshold = args.t
+nms_threshold = args.n
 
 
 class YoloDetector:
@@ -37,7 +82,7 @@ class YoloDetector:
             self.classes = f.read().rstrip('\n').split('\n')
         print(self.classes)
 
-    def init_net(self, cfg, weights, input_shape=(416,416)):
+    def init_net(self, cfg, weights, input_shape=(416, 416)):
         self.net = cv2.dnn.readNetFromDarknet(cfg, weights)
         self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
         self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
@@ -78,7 +123,7 @@ class YoloDetector:
         top = max(top, label_size[1])
         cv2.putText(image, label, (left, top), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
-    def draw_annotations(self, image, image_path:str):
+    def draw_annotations(self, image, image_path: str):
         annotation_path = image_path[:-3] + "txt"
         if not os.path.exists(annotation_path):
             annotation_path = annotation_path.replace("JPEGImages", "labels").replace("images", "labels")
@@ -118,8 +163,8 @@ class YoloDetector:
         for out in detections:
             for detection in out:
                 scores = detection[5:]
-                classId = np.argmax(scores)
-                confidence = scores[classId]
+                class_id = np.argmax(scores)
+                confidence = scores[class_id]
                 if confidence > conf_thresh:
                     center_x = int(detection[0] * img_w)
                     center_y = int(detection[1] * img_h)
@@ -129,7 +174,7 @@ class YoloDetector:
                     top = max(int(center_y - height / 2), 0)
                     width = min(img_w - left, width)
                     height = min(img_h - top, height)
-                    class_ids.append(classId)
+                    class_ids.append(class_id)
                     confidences.append(float(confidence))
                     boxes.append([left, top, width, height])
 
@@ -141,15 +186,15 @@ class YoloDetector:
             box = boxes[i]
             left = box[0]
             top = box[1]
-            right = min(img_w -1, left + box[2])
-            bottom = min(img_h -1, top + box[3])
+            right = min(img_w - 1, left + box[2])
+            bottom = min(img_h - 1, top + box[3])
             self.draw_box(image, class_ids[i], confidences[i], left, top, right, bottom)
 
 
 # init detector
 detector = YoloDetector()
 detector.load_classes(classes_file)
-detector.init_net(cfg_file, weights_file, input_shape)
+detector.init_net(cfg_file, weights_file, net_shape)
 file_list = glob.glob(img_dir + "/*/*.jpg")
 file_list.extend(glob.glob(img_dir + "/*.jpg"))
 
@@ -181,9 +226,9 @@ class Viewer:
         label_nms = tk.Label(container_top0, text="NMS", anchor="s")
         label_nms.pack(side=tk.LEFT, expand=tk.NO, fill=tk.Y)
         scale_nms = tk.Scale(container_top0, from_=0.1, to=1.0, resolution=0.1,
-                              length=300, width=7, troughcolor="lightblue", bd=1, relief="flat",
-                              sliderrelief='flat', variable=self.nms_var, command=self.on_thresh_change,
-                              orient=tk.HORIZONTAL)
+                             length=300, width=7, troughcolor="lightblue", bd=1, relief="flat",
+                             sliderrelief='flat', variable=self.nms_var, command=self.on_thresh_change,
+                             orient=tk.HORIZONTAL)
         scale_nms.pack(side=tk.LEFT, expand=tk.NO, fill=tk.NONE)
 
         container_top1 = tk.Label(root)
